@@ -1,39 +1,68 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../components/layout/AuthLayout';
-import { Github } from 'lucide-react';
+import { Github, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
 
 export default function Login() {
     const navigate = useNavigate();
+    const { login } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        navigate('/dashboard');
+        setIsLoading(true);
+        setError(null);
+
+        const form = e.target as HTMLFormElement;
+        const email = (form.elements.namedItem('email') as HTMLInputElement).value; // Actually username field in backend, let's assume email is username for now or we change input type? Backend expects 'username'. Let's ask user to input username or just map email to username if we want. But the backend auth generic view usually expects 'username'. Let's check backend/core/serializers.py UserSerializer. It has 'username'.
+        // Wait, standard DRF ObtainAuthToken expects 'username' and 'password'.
+        // In the form below, the label says "Email".
+        // I should change the input name to username or handle email-as-username in backend.
+        // For simplicity, let's treat the input as username for now, or just pass it as username.
+        const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+        try {
+            await login(email, password); // Passing email as username
+            navigate('/dashboard');
+        } catch (err: any) {
+            console.error(err);
+            setError("Credenciais inválidas. Tente novamente.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <AuthLayout title="Bem-vindo de volta" subtitle="Acesse sua conta para continuar validando ideias.">
             <form onSubmit={handleLogin} className="space-y-4">
+                {error && <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">{error}</div>}
                 <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Email</label>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Username</label>
                     <input
-                        type="email"
-                        defaultValue="demo@metricpath.com"
+                        name="email"
+                        type="text"
+                        defaultValue="demo_user"
                         className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                        placeholder="seu@email.com"
+                        placeholder="seu_usuario"
+                        disabled={isLoading}
                     />
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Password</label>
                     <input
+                        name="password"
                         type="password"
-                        defaultValue="demo1234"
+                        defaultValue="password123"
                         className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors"
                         placeholder="••••••••"
+                        disabled={isLoading}
                     />
                 </div>
 
-                <button className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold transition-all shadow-lg shadow-indigo-600/20">
-                    Entrar
+                <button disabled={isLoading} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg font-bold transition-all shadow-lg shadow-indigo-600/20 flex justify-center items-center">
+                    {isLoading ? <Loader2 className="animate-spin" size={20} /> : "Entrar"}
                 </button>
             </form>
 

@@ -1,0 +1,59 @@
+services:
+  api:
+    build:
+      context: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG=1
+      - DB_HOST=db
+      - DB_NAME=metricpath
+      - DB_USER=metricpath
+      - DB_PASS=metricpath
+      - REDIS_URL=redis://redis:6379/0
+
+  worker:
+    build:
+      context: ./backend
+    command: celery -A metricpath_core worker -l info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG=1
+      - DB_HOST=db
+      - DB_NAME=metricpath
+      - DB_USER=metricpath
+      - DB_PASS=metricpath
+      - REDIS_URL=redis://redis:6379/0
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=metricpath
+      - POSTGRES_USER=metricpath
+      - POSTGRES_PASSWORD=metricpath
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

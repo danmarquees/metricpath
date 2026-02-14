@@ -2,28 +2,41 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { ArrowRight, Github, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Signup() {
     const navigate = useNavigate();
-
+    const { register } = useAuth();
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSignup = (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
+        setError(null);
+
+        const form = e.target as HTMLFormElement;
+        const name = (form.elements.namedItem('name') as HTMLInputElement).value; // Actually mapping to username
+        const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+        const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+        try {
+            await register(name, email, password); // Name as username
             setLoading(false);
             setStep(2);
-        }, 1000);
+        } catch (err) {
+            console.error(err);
+            setError("Falha ao criar conta. Tente outro email/username.");
+            setLoading(false);
+        }
     };
 
     const handleOnboarding = (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
+        // Simulate API call for onboarding preference saving
         setTimeout(() => {
             navigate('/dashboard');
         }, 1500);
@@ -37,31 +50,38 @@ export default function Signup() {
             {step === 1 ? (
                 <>
                     <form onSubmit={handleSignup} className="space-y-4 animate-in fade-in slide-in-from-right-8 duration-500">
+                        {error && <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">{error}</div>}
                         <div>
-                            <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Nome Completo</label>
+                            <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Nome de Usuário</label>
                             <input
+                                name="name"
                                 type="text"
                                 required
                                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                                placeholder="John Doe"
+                                placeholder="johndoe"
+                                disabled={loading}
                             />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Email</label>
                             <input
+                                name="email"
                                 type="email"
                                 required
                                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors"
                                 placeholder="seu@email.com"
+                                disabled={loading}
                             />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Password</label>
                             <input
+                                name="password"
                                 type="password"
                                 required
                                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors"
                                 placeholder="••••••••"
+                                disabled={loading}
                             />
                             {/* Visual Strength Meter Placeholder */}
                             <div className="flex gap-1 mt-2">

@@ -29,62 +29,115 @@ import Privacy from './pages/public/Privacy';
 import Terms from './pages/public/Terms';
 import Cookies from './pages/public/Cookies';
 import Refund from './pages/public/Refund';
+import { AuthProvider } from './context/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        {/* Public Pages */}
-        <Route path="/features" element={<Features />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/api-docs" element={<ApiDocs />} />
-        <Route path="/changelog" element={<Changelog />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/docs" element={<Guide />} />
-        <Route path="/glossary" element={<Glossary />} />
-        <Route path="/roi-calculator" element={<RoiCalculator />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/roadmap" element={<Roadmap />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/cookie-policy" element={<Cookies />} />
-        <Route path="/refund-policy" element={<Refund />} />
+          {/* Public Pages */}
+          <Route path="/features" element={<Features />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/api-docs" element={<ApiDocs />} />
+          <Route path="/changelog" element={<Changelog />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/docs" element={<Guide />} />
+          <Route path="/glossary" element={<Glossary />} />
+          <Route path="/roi-calculator" element={<RoiCalculator />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/roadmap" element={<Roadmap />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/cookie-policy" element={<Cookies />} />
+          <Route path="/refund-policy" element={<Refund />} />
 
-        {/* Dashboard Routes (With Layout) */}
-        <Route element={
-          <div className="flex min-h-screen bg-zinc-950 text-zinc-200 antialiased font-sans">
-            <Sidebar />
-            <main className="flex-1 ml-64 flex flex-col min-h-screen relative">
-              <Header />
-              <div className="flex-1 bg-zinc-950 relative z-0">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/new-analysis" element={<NewAnalysis />} />
-                  <Route path="/history" element={<History />} />
-                  <Route path="/report/:id" element={<ReportView />} />
-                  <Route path="/competitors" element={<Competitors />} />
-                  <Route path="/trends" element={<Trends />} />
-                  <Route path="/global-explorer" element={<GlobalExplorer />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+          {/* Protected Dashboard Routes */}
+          <Route element={<PrivateRoute />}>
+            <Route element={
+              <div className="flex min-h-screen bg-zinc-950 text-zinc-200 antialiased font-sans">
+                <Sidebar />
+                <main className="flex-1 ml-64 flex flex-col min-h-screen relative">
+                  <Header />
+                  <div className="flex-1 bg-zinc-950 relative z-0">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/new-analysis" element={<NewAnalysis />} />
+                      <Route path="/history" element={<History />} />
+                      <Route path="/report/:id" element={<ReportView />} />
+                      <Route path="/competitors" element={<Competitors />} />
+                      <Route path="/trends" element={<Trends />} />
+                      <Route path="/global-explorer" element={<GlobalExplorer />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </div>
+                </main>
               </div>
-            </main>
-          </div>
-        } >
-          {/* Sub-routes handled above */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            }>
+              {/* Sub-routes handled above, but technically Routes inside Routes is tricky with Outlet.
+                  The PrivateRoute renders Outlet.
+                  The Layout Route (div...) renders Routes? No, wait.
+                  
+                  Correct nesting for v6:
+                  <Route element={<PrivateRoute />}>
+                     <Route element={<Layout />}>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        ...
+                     </Route>
+                  </Route>
+                  
+                  But here the Layout is inline.
+                  Let's refactor the inline layout to be the element of the Route, and IT should render <Outlet/> if it's a layout route.
+                  Currently the inline layout has <Routes> inside it. This means it's a descendant route config.
+                  
+                  If I keep the inline layout with <Routes>, then the parent Route path must be "/*" to match everything.
+                  BUT PrivateRoute uses <Outlet/>.
+                  
+                  Let's try this structure:
+                  <Route element={<PrivateRoute />}>
+                     <Route path="/*" element={<DashboardLayout />} />
+                  </Route>
+                  
+                  And DashboardLayout contains the Routes.
+              */}
+              <Route path="/*" element={
+                <div className="flex min-h-screen bg-zinc-950 text-zinc-200 antialiased font-sans">
+                  <Sidebar />
+                  <main className="flex-1 ml-64 flex flex-col min-h-screen relative">
+                    <Header />
+                    <div className="flex-1 bg-zinc-950 relative z-0">
+                      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
+                      <Routes>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="new-analysis" element={<NewAnalysis />} />
+                        <Route path="history" element={<History />} />
+                        <Route path="report/:id" element={<ReportView />} />
+                        <Route path="competitors" element={<Competitors />} />
+                        <Route path="trends" element={<Trends />} />
+                        <Route path="global-explorer" element={<GlobalExplorer />} />
+                        <Route path="settings" element={<Settings />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </div>
+                  </main>
+                </div>
+              } />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
 export default App
+

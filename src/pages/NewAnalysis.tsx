@@ -1,6 +1,33 @@
-import { ArrowRight, Clock, Search, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, Clock, Search, Sparkles, TrendingUp, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AnalysisService } from '../services/analysis';
 
 export default function NewAnalysis() {
+    const navigate = useNavigate();
+    const [niche, setNiche] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleAnalyze = async () => {
+        if (!niche.trim()) return;
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await AnalysisService.startAnalysis(niche);
+            // Redirect to report view with query ID (or task ID if we want to poll there)
+            // Ideally backend returns query_id, let's assume it does based on our view
+            navigate(`/report/${response.query_id}`);
+        } catch (err) {
+            console.error(err);
+            setError("Falha ao iniciar análise. Tente novamente.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="p-8 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[80vh]">
             <div className="text-center mb-12">
@@ -23,13 +50,22 @@ export default function NewAnalysis() {
                     <input
                         type="text"
                         placeholder="Ex: CRM para fotógrafos de casamento..."
-                        className="w-full bg-transparent border-none focus:ring-0 text-white text-lg placeholder:text-zinc-600 px-4 py-2"
+                        className="w-full bg-transparent border-none focus:ring-0 text-white text-lg placeholder:text-zinc-600 px-4 py-2 outline-none"
                         autoFocus
+                        value={niche}
+                        onChange={(e) => setNiche(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
+                        disabled={isLoading}
                     />
-                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-bold transition-all flex items-center gap-2">
-                        Analisar <ArrowRight size={18} />
+                    <button
+                        onClick={handleAnalyze}
+                        disabled={isLoading || !niche.trim()}
+                        className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-bold transition-all flex items-center gap-2"
+                    >
+                        {isLoading ? <Loader2 size={18} className="animate-spin" /> : <>Analisar <ArrowRight size={18} /></>}
                     </button>
                 </div>
+                {error && <p className="text-rose-400 text-sm mt-2 ml-2">{error}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
