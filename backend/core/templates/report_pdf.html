@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MetricPath Analysis Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+            @frame footer_frame {           /* Static Frame */
+                -pdf-frame-content: footer_content;
+                bottom: 1cm;
+                margin-left: 2cm;
+                margin-right: 2cm;
+                height: 1cm;
+            }
+        }
+        body {
+            font-family: Helvetica, sans-serif;
+            color: #333;
+            line-height: 1.5;
+        }
+        h1 {
+            color: #4F46E5; /* Indigo 600 */
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        h2 {
+            color: #1F2937; /* Gray 800 */
+            font-size: 18px;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .meta {
+            color: #6B7280;
+            font-size: 12px;
+            text-align: center;
+        }
+        .score-box {
+            background-color: #F3F4F6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .score-val {
+            font-size: 48px;
+            font-weight: bold;
+            color: #4F46E5;
+        }
+        .metrics-grid {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .metrics-grid td {
+            width: 33%;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #E5E7EB;
+        }
+        .metric-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #6B7280;
+            display: block;
+        }
+        .metric-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #111827;
+        }
+        table.competitors {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table.competitors th, table.competitors td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #E5E7EB;
+            font-size: 12px;
+        }
+        table.competitors th {
+            background-color: #F9FAFB;
+            font-weight: bold;
+            color: #374151;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #9CA3AF;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MetricPath Analysis Report</h1>
+        <div class="meta">
+            Generated on {% now "F j, Y" %} | Niche: <strong>{{ niche }}</strong>
+        </div>
+    </div>
+
+    <div class="score-box">
+        <div style="font-size: 14px; color: #4B5563; margin-bottom: 5px;">IVM Viability Score</div>
+        <div class="score-val">{{ ivm_score|floatformat:0 }}</div>
+        <div style="font-size: 12px; color: #6B7280;">/ 100</div>
+    </div>
+
+    <h2>Key Metrics</h2>
+    <table class="metrics-grid">
+        <tr>
+            <td>
+                <span class="metric-label">Search Volume</span>
+                <span class="metric-value">{{ volume }}</span>
+            </td>
+            <td>
+                <span class="metric-label">Opportunity Sentiment</span>
+                <span class="metric-value">
+                    {% if sentiment_score > 0 %}Positive{% elif sentiment_score < 0 %}Negative (Good){% else %}Neutral{% endif %}
+                </span>
+            </td>
+            <td>
+                <span class="metric-label">Est. CPC</span>
+                <span class="metric-value">${{ cpc|default:"2.50" }}</span>
+            </td>
+        </tr>
+    </table>
+
+    <h2>Top Competitors</h2>
+    <table class="competitors">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comp in competitors %}
+            <tr>
+                <td>{{ comp.title }}</td>
+                <td><a href="{{ comp.url }}" style="color: #4F46E5; text-decoration: none;">{{ comp.url|truncatechars:50 }}</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No competitors data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Actionable Insights</h2>
+    <ul>
+        {% if ivm_score > 70 %}
+        <li><strong>High Potential:</strong> This niche shows strong demand with weak or dissatisfied competition. Great for an MVP.</li>
+        {% elif ivm_score > 40 %}
+        <li><strong>Moderate Potential:</strong> There is demand, but competition is established. Focus on a specific sub-niche or unique angle.</li>
+        {% else %}
+        <li><strong>Low Potential:</strong> High saturation or low volume. Proceed with caution.</li>
+        {% endif %}
+        <li>Focus on addressing the customer pain points found in negative reviews.</li>
+    </ul>
+
+    <div id="footer_content" class="footer">
+        &copy; 2026 MetricPath. All rights reserved.
+    </div>
+</body>
+</html>

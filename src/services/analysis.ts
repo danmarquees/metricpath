@@ -10,6 +10,7 @@ export interface AnalysisResultData {
     id: number;
     status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
     ivm_score?: number;
+    niche: string;
     raw_data?: any;
     created_at: string;
     updated_at: string;

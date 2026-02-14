@@ -1,5 +1,5 @@
-import { ArrowLeft, Download, Share2, Loader2, AlertCircle } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, Download, Loader2, AlertCircle, Globe, TrendingUp, Target, Activity } from 'lucide-react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AIInsights } from '../components/dashboard/AIInsights';
 import { MarketHeatmap } from '../components/dashboard/MarketHeatmap';
@@ -7,54 +7,131 @@ import { MetricCard } from '../components/dashboard/MetricCard';
 import { SentimentFeed } from '../components/dashboard/SentimentFeed';
 import { SubNicheBreakdown } from '../components/dashboard/SubNicheBreakdown';
 import { TrendChart } from '../components/dashboard/TrendChart';
-import { Globe, Target, TrendingUp } from 'lucide-react';
 import { AnalysisService, type AnalysisResultData } from '../services/analysis';
 
 export default function ReportView() {
     const { id } = useParams();
-    const [data, setData] = useState<AnalysisResultData | null>(null);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [data, setData] = useState<AnalysisResultData | null>(null);
+    const [realtimeMessage, setRealtimeMessage] = useState<string>('');
 
     useEffect(() => {
         if (!id) return;
 
-        let intervalId: any;
-
-        const fetchData = async () => {
-            try {
-                const result = await AnalysisService.getAnalysisStatus(id);
-                setData(result);
-
-                if (result.status === 'COMPLETED' || result.status === 'FAILED') {
-                    setLoading(false);
-                    if (intervalId) clearInterval(intervalId);
-                }
-            } catch (err) {
-                console.error(err);
-                setError("Falha ao carregar relatório.");
+        // Initial fetch to get current state (in case we missed WS events or page refresh)
+        AnalysisService.getAnalysisStatus(id).then(initialData => {
+            setData(initialData);
+            if (initialData.status === 'COMPLETED' || initialData.status === 'FAILED') {
                 setLoading(false);
-                if (intervalId) clearInterval(intervalId);
+            }
+        }).catch(err => {
+            console.error("Failed to fetch initial status", err);
+            setError("Failed to load report data.");
+            setLoading(false);
+        });
+
+        // WebSocket Connection
+        // Use standard WebSocket or a library. For simplicity, standard WS.
+        // Assuming backend running on localhost:8000
+        const wsUrl = `ws://127.0.0.1:8000/ws/analysis/${id}/`;
+        const socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => {
+            console.log("WebSocket Connected");
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log("WS Message:", message);
+
+            if (message.message) {
+                setRealtimeMessage(message.message);
+            }
+
+            if (message.status === 'COMPLETED') {
+                // Refresh full data or update state directly
+                // Ideally backend sends full data, but our consumer simple sends score.
+                // Let's refetch to be safe and get full object
+                AnalysisService.getAnalysisStatus(id).then(fullData => {
+                    setData(fullData);
+                    setLoading(false);
+                });
+            } else if (message.status === 'FAILED') {
+                setError(message.message || "Analysis failed.");
+                setLoading(false);
             }
         };
 
-        // Initial fetch
-        fetchData();
+        socket.onerror = (error) => {
+            console.error("WebSocket Error:", error);
+            // Fallback to polling could be implemented here
+        };
 
-        // Poll every 2 seconds
-        intervalId = setInterval(fetchData, 2000);
+        socket.onclose = () => {
+            console.log("WebSocket Disconnected");
+        };
 
-        return () => clearInterval(intervalId);
+        return () => {
+            socket.close();
+        };
     }, [id]);
 
-    if (loading || (data && data.status !== 'COMPLETED' && data.status !== 'FAILED')) {
+    import { Skeleton } from '../components/ui/Skeleton';
+
+    // ... other imports
+
+    // Inside ReportView component:
+
+    if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen text-zinc-400">
-                <Loader2 size={32} className="animate-spin mb-4 text-indigo-500" />
-                <h2 className="text-xl font-bold text-white mb-2">Analisando o mercado...</h2>
-                <p className="text-sm">Os nossos workers estão a minerar dados sobre "{data?.raw_data?.serp?.search_parameters?.q || 'o seu nicho'}".</p>
-                <div className="mt-8 w-64 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 animate-progress"></div>
+            <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+                {/* Header Skeleton */}
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-10 w-10 rounded-lg" />
+                        <div>
+                            <Skeleton className="h-8 w-64 mb-2" />
+                            <Skeleton className="h-4 w-32" />
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <Skeleton className="h-10 w-32 rounded-lg" />
+                        <Skeleton className="h-10 w-32 rounded-lg" />
+                    </div>
+                </div>
+
+                {/* Metrics Grid Skeleton */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-3">
+                            <Skeleton className="h-4 w-20" />
+                            <Skeleton className="h-10 w-32" />
+                            <Skeleton className="h-4 w-40" />
+                        </div>
+                    ))}
+                </div>
+
+                {/* Charts Skeleton */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-8">
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl h-[400px]">
+                            <Skeleton className="h-8 w-48 mb-8" />
+                            <Skeleton className="h-[300px] w-full rounded-xl" />
+                        </div>
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl h-[200px]">
+                            <Skeleton className="h-full w-full" />
+                        </div>
+                    </div>
+                    <div className="space-y-8">
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl h-[300px]">
+                            <Skeleton className="h-full w-full" />
+                        </div>
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl h-[400px]">
+                            <Skeleton className="h-full w-full" />
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -90,12 +167,43 @@ export default function ReportView() {
                         <p className="text-zinc-500 text-sm">Gerado em {new Date(data?.created_at || '').toLocaleDateString()}</p>
                     </div>
                 </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-bold text-zinc-400 hover:text-white transition-colors">
+                <div className="flex gap-4">
+                    <button
+                        onClick={async () => {
+                            try {
+                                const token = localStorage.getItem('token');
+                                const response = await fetch(`http://localhost:8000/api/analysis/${id}/export_pdf/`, {
+                                    headers: {
+                                        'Authorization': `Token ${token}`
+                                    }
+                                });
+
+                                if (response.ok) {
+                                    const blob = await response.blob();
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `metricpath_report_${data?.niche}.pdf`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                } else {
+                                    alert('Erro ao gerar PDF');
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                alert('Erro de conexão');
+                            }
+                        }}
+                        className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg transition-colors text-sm font-bold flex items-center gap-2 border border-zinc-700"
+                    >
                         <Download size={16} /> Exportar PDF
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-colors shadow-lg shadow-indigo-600/20">
-                        <Share2 size={16} /> Compartilhar
+                    <button
+                        onClick={() => navigate('/dashboard')}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors text-sm font-bold"
+                    >
+                        Nova Análise
                     </button>
                 </div>
             </div>

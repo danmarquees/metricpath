@@ -24,38 +24,56 @@ export const Sidebar = () => (
                     key={i}
                     to={item.href}
                     className={({ isActive }) => cn(
-                        "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                        "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative overflow-hidden",
                         isActive
-                            ? 'bg-zinc-900 text-white border border-zinc-800 shadow-sm'
-                            : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'
+                            ? 'bg-zinc-900 text-white shadow-sm'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-900/30'
                     )}
                 >
-                    {item.icon}
-                    {item.label}
+                    {({ isActive }) => (
+                        <>
+                            {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-indigo-500 rounded-r-full" />
+                            )}
+                            <span className={cn("relative z-10 flex items-center gap-3 transition-transform duration-200", !isActive && "group-hover:translate-x-1")}>
+                                {item.icon}
+                                {item.label}
+                            </span>
+                        </>
+                    )}
                 </NavLink>
             ))}
         </nav>
 
         <div className="p-4 mt-auto border-t border-zinc-800">
-            <div className="mb-4 p-3 bg-indigo-600/5 border border-indigo-500/20 rounded-xl">
-                <div className="flex justify-between items-center mb-1">
-                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Limite de Créditos</p>
-                    <p className="text-[10px] text-zinc-500">15 / 20</p>
+            <div className="mb-4 p-3 bg-zinc-900/50 border border-zinc-800 rounded-xl">
+                <div className="flex justify-between items-center mb-2">
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Créditos</p>
+                    <p className="text-[10px] text-zinc-500 font-mono">15/20</p>
                 </div>
                 <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                    <div className="w-3/4 h-full bg-indigo-500" />
+                    <div className="w-3/4 h-full bg-gradient-to-r from-indigo-500 to-cyan-500" />
                 </div>
             </div>
 
             <NavLink
                 to="/settings"
                 className={({ isActive }) => cn(
-                    "w-full flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors rounded-lg mb-1",
-                    isActive ? 'bg-zinc-900 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'
+                    "w-full flex items-center gap-3 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg mb-1 group relative",
+                    isActive ? 'bg-zinc-900 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-900/30'
                 )}
             >
-                <Settings size={18} />
-                Configurações
+                {({ isActive }) => (
+                    <>
+                        {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-indigo-500 rounded-r-full" />
+                        )}
+                        <span className={cn("relative z-10 flex items-center gap-3 transition-transform duration-200", !isActive && "group-hover:translate-x-1")}>
+                            <Settings size={18} />
+                            Configurações
+                        </span>
+                    </>
+                )}
             </NavLink>
 
             <NavLink

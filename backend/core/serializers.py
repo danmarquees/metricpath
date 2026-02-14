@@ -23,10 +23,11 @@ class CompetitorSerializer(serializers.ModelSerializer):
 
 class AnalysisResultSerializer(serializers.ModelSerializer):
     competitors = CompetitorSerializer(many=True, read_only=True)
+    niche = serializers.CharField(source='search_query.niche', read_only=True)
     
     class Meta:
         model = AnalysisResult
-        fields = ['id', 'status', 'ivm_score', 'raw_data', 'competitors', 'created_at', 'updated_at']
+        fields = ['id', 'status', 'ivm_score', 'raw_data', 'competitors', 'created_at', 'updated_at', 'niche']
 
 class SearchQuerySerializer(serializers.ModelSerializer):
     result = AnalysisResultSerializer(read_only=True)
