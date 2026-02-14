@@ -1,29 +1,14 @@
 import { BarChart3, Check, ChevronRight, Globe, Layout, Search, Shield, TrendingUp, Zap, MessageSquare, Code2, Star, Target, X, Terminal, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PublicLayout } from '../components/layout/PublicLayout';
+import { HeroNetwork } from '../components/landing/HeroNetwork';
 
 export default function LandingPage() {
     return (
-        <div className="min-h-screen bg-zinc-950 text-white selection:bg-indigo-500/30">
-            {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(79,70,229,0.4)]">
-                            <BarChart3 className="text-white w-5" />
-                        </div>
-                        <span className="text-xl font-bold tracking-tight">MetricPath</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <Link to="/login" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Login</Link>
-                        <Link to="/signup" className="px-4 py-2 bg-white text-zinc-950 text-sm font-bold rounded-full hover:bg-zinc-200 transition-colors">
-                            Começar Grátis
-                        </Link>
-                    </div>
-                </div>
-            </nav>
-
+        <PublicLayout>
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+            <section className="relative pt-16 pb-20 px-6 overflow-hidden">
+                <HeroNetwork />
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/20 via-zinc-950 to-zinc-950 pointer-events-none" />
 
                 <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -63,14 +48,125 @@ export default function LandingPage() {
                 </div>
 
                 {/* Dashboard Preview / Abstract Visual */}
-                <div className="mt-20 max-w-6xl mx-auto relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-                    <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
-                        <img
-                            src="/dashboard-preview.png"
-                            alt="MetricPath Dashboard Preview"
-                            className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
-                        />
+                <div className="mt-20 max-w-5xl mx-auto relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                    <div className="relative bg-[#09090b] border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+                        {/* Windows Controls & Header */}
+                        <div className="border-b border-white/5 bg-zinc-900/50 px-4 py-3 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                                <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                                <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                            </div>
+                            <div className="flex-1 text-center">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-zinc-950 border border-white/5 text-[10px] text-zinc-500 font-mono">
+                                    <Lock size={10} /> metricpath.com/dashboard
+                                </div>
+                            </div>
+                            <div className="w-16"></div> {/* Spacer */}
+                        </div>
+
+                        {/* Content Mock */}
+                        <div className="flex h-[400px] md:h-[500px]">
+                            {/* Sidebar Mock */}
+                            <div className="w-16 md:w-48 border-r border-white/5 bg-zinc-900/30 p-4 hidden md:flex flex-col gap-4">
+                                <div className="h-8 w-8 bg-indigo-500/20 rounded-lg mb-4 border border-indigo-500/30"></div>
+                                <div className="space-y-2">
+                                    <div className="h-8 w-full bg-zinc-800/50 rounded-md"></div>
+                                    <div className="h-8 w-full bg-transparent rounded-md border border-white/5"></div>
+                                    <div className="h-8 w-3/4 bg-transparent rounded-md border border-white/5 opacity-50"></div>
+                                </div>
+                                <div className="mt-auto space-y-2">
+                                    <div className="h-20 w-full bg-indigo-500/10 rounded-xl border border-indigo-500/20 p-2 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-1">
+                                            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Main Area Mock */}
+                            <div className="flex-1 bg-zinc-950 p-6 md:p-8 overflow-hidden relative">
+                                {/* Abstract Data Grid Background */}
+                                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] pointer-events-none"></div>
+
+                                {/* Header */}
+                                <div className="flex justify-between items-end mb-8 relative z-10">
+                                    <div>
+                                        <div className="h-2 w-20 bg-zinc-800 rounded mb-2"></div>
+                                        <div className="h-8 w-48 bg-zinc-800 rounded"></div>
+                                    </div>
+                                    <div className="h-8 w-24 bg-indigo-600 rounded-full hidden md:block"></div>
+                                </div>
+
+                                {/* Widgets Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                                    {/* Large Card (Viability) */}
+                                    <div className="col-span-1 md:col-span-2 bg-zinc-900/50 border border-white/5 rounded-xl p-6 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-4 opacity-20">
+                                            <TrendingUp size={48} />
+                                        </div>
+                                        <div className="h-4 w-32 bg-zinc-800 rounded mb-6"></div>
+                                        <div className="flex items-end gap-4">
+                                            <div className="text-5xl font-bold text-white tracking-tighter">87<span className="text-2xl text-zinc-500">/100</span></div>
+                                            <div className="mb-2 text-emerald-400 text-sm font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">+12% vs avg</div>
+                                        </div>
+                                        <div className="mt-6 h-2 w-full bg-zinc-800 rounded-full overflow-hidden">
+                                            <div className="h-full w-[87%] bg-gradient-to-r from-indigo-500 to-emerald-500"></div>
+                                        </div>
+                                    </div>
+
+                                    {/* Small Card (Activity) */}
+                                    <div className="col-span-1 bg-zinc-900/50 border border-white/5 rounded-xl p-6 flex flex-col justify-between">
+                                        <div className="flex justify-between items-start">
+                                            <div className="h-4 w-20 bg-zinc-800 rounded"></div>
+                                            <div className="h-2 w-2 bg-green-500 rounded-full animate-ping"></div>
+                                        </div>
+                                        <div className="space-y-2 mt-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-1 bg-zinc-800 rounded"></div>
+                                                <div className="flex-1 h-1 bg-zinc-800/30 rounded"></div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-12 h-1 bg-zinc-800 rounded"></div>
+                                                <div className="flex-1 h-1 bg-zinc-800/30 rounded"></div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-6 h-1 bg-zinc-800 rounded"></div>
+                                                <div className="flex-1 h-1 bg-zinc-800/30 rounded"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Table Mock */}
+                                <div className="mt-6 bg-zinc-900/50 border border-white/5 rounded-xl p-6 relative z-10 h-48 overflow-hidden mask-linear-fade">
+                                    <div className="flex items-center gap-4 mb-4 border-b border-white/5 pb-2">
+                                        <div className="h-3 w-4 bg-zinc-800 rounded"></div>
+                                        <div className="h-3 w-32 bg-zinc-800 rounded"></div>
+                                        <div className="h-3 w-16 bg-zinc-800 rounded ml-auto"></div>
+                                    </div>
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="flex items-center gap-4 mb-3 opacity-60">
+                                            <div className="h-8 w-8 bg-zinc-800 rounded-full"></div>
+                                            <div className="space-y-1">
+                                                <div className="h-2 w-24 bg-zinc-800 rounded"></div>
+                                                <div className="h-2 w-16 bg-zinc-800/50 rounded"></div>
+                                            </div>
+                                            <div className="h-4 w-12 bg-zinc-800 rounded ml-auto"></div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Floating Elements */}
+                                <div className="absolute bottom-10 right-10 z-20 animate-bounce duration-[3000ms]">
+                                    <div className="bg-zinc-950 border border-indigo-500/30 rounded-lg p-3 shadow-2xl shadow-indigo-500/20 flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                                        <span className="text-xs font-bold text-white">Nicho Validado!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -313,103 +409,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="border-t border-white/5 bg-[#05070A] pt-20 pb-10 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                        {/* Brand & Micro-CTA */}
-                        <div className="col-span-1 md:col-span-1">
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(79,70,229,0.4)]">
-                                    <BarChart3 className="text-white w-5" />
-                                </div>
-                                <span className="text-xl font-bold tracking-tight text-white">MetricPath</span>
-                            </div>
-                            <p className="text-zinc-500 text-sm mb-6 leading-relaxed">
-                                Inteligência de mercado para quem constrói o futuro. Valide suas ideias com dados, não com "achismos".
-                            </p>
-                            <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-1.5 flex items-center">
-                                <input
-                                    type="email"
-                                    placeholder="Seu melhor email..."
-                                    className="bg-transparent border-none text-xs text-white placeholder-zinc-600 focus:ring-0 w-full px-2"
-                                />
-                                <button className="bg-white text-zinc-950 p-1.5 rounded-md hover:bg-zinc-200 transition-colors">
-                                    <ChevronRight size={14} />
-                                </button>
-                            </div>
-                            <p className="text-[10px] text-zinc-600 mt-2">Receba tendências de nichos validados.</p>
-                        </div>
-
-                        {/* Navigation Columns */}
-                        <div>
-                            <h4 className="font-bold text-white mb-6">Produto</h4>
-                            <ul className="space-y-4 text-sm text-zinc-500">
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Recursos</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Preços</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">API Docs</a> <span className="text-[10px] bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20 ml-1">Beta</span></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Changelog</a></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-bold text-white mb-6">Recursos</h4>
-                            <ul className="space-y-4 text-sm text-zinc-500">
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Blog: Validação</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Guia de Uso</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Glossário IVM</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Calculadora ROI</a></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-bold text-white mb-6">Empresa</h4>
-                            <ul className="space-y-4 text-sm text-zinc-500">
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Sobre Nós</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Roadmap Público</a></li>
-                                <li><a href="#" className="hover:text-indigo-400 transition-colors">Contato</a></li>
-                                <li><div className="flex items-center gap-2 opacity-50"><Globe size={14} /> <span>Pt-BR</span></div></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                        {/* Copyright & Location */}
-                        <div className="text-center md:text-left">
-                            <p className="text-zinc-600 text-xs mb-1">© 2026 MetricPath Inc. Todos os direitos reservados.</p>
-                            <div className="flex items-center justify-center md:justify-start gap-2 text-[10px] text-zinc-700 font-mono uppercase tracking-wide">
-                                <span>Made with ❤️ in Brazil</span>
-                                <span className="w-1 h-1 bg-zinc-800 rounded-full"></span>
-                                <span>São Paulo, SP</span>
-                            </div>
-                        </div>
-
-                        {/* Trust Badges */}
-                        <div className="flex items-center gap-4 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-                            <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono border border-zinc-800 px-2 py-1 rounded bg-zinc-900/50">
-                                <Lock size={10} /> SSL Secured
-                            </div>
-                            <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono border border-zinc-800 px-2 py-1 rounded bg-zinc-900/50">
-                                <Shield size={10} /> Data Protected
-                            </div>
-                        </div>
-
-                        {/* Social & Legal */}
-                        <div className="flex flex-col items-end gap-4">
-                            <div className="flex gap-4">
-                                <a href="#" className="text-zinc-500 hover:text-white transition-colors"><span className="sr-only">GitHub</span><Code2 size={18} /></a>
-                                <a href="#" className="text-zinc-500 hover:text-blue-400 transition-colors"><span className="sr-only">Twitter</span><Globe size={18} /></a>
-                                <a href="#" className="text-zinc-500 hover:text-indigo-500 transition-colors"><span className="sr-only">Discord</span><MessageSquare size={18} /></a>
-                            </div>
-                            <div className="flex gap-4 text-xs text-zinc-600">
-                                <a href="#" className="hover:text-zinc-400 transition-colors">Privacidade</a>
-                                <a href="#" className="hover:text-zinc-400 transition-colors">Termos</a>
-                                <a href="#" className="hover:text-zinc-400 transition-colors">Cookies</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>
+        </PublicLayout>
     )
 }
