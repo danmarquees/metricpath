@@ -1,4 +1,4 @@
-import { ArrowLeft, Download, Loader2, AlertCircle, Globe, TrendingUp, Target, Activity } from 'lucide-react';
+import { ArrowLeft, Download, AlertCircle, Globe, TrendingUp, Target } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AIInsights } from '../components/dashboard/AIInsights';
@@ -8,14 +8,16 @@ import { SentimentFeed } from '../components/dashboard/SentimentFeed';
 import { SubNicheBreakdown } from '../components/dashboard/SubNicheBreakdown';
 import { TrendChart } from '../components/dashboard/TrendChart';
 import { AnalysisService, type AnalysisResultData } from '../services/analysis';
+import { useToast } from '../context/ToastContext';
+import { Skeleton } from '../components/ui/Skeleton';
 
 export default function ReportView() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { toast, error: showError } = useToast();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<AnalysisResultData | null>(null);
-    const [realtimeMessage, setRealtimeMessage] = useState<string>('');
 
     useEffect(() => {
         if (!id) return;
@@ -33,8 +35,6 @@ export default function ReportView() {
         });
 
         // WebSocket Connection
-        // Use standard WebSocket or a library. For simplicity, standard WS.
-        // Assuming backend running on localhost:8000
         const wsUrl = `ws://127.0.0.1:8000/ws/analysis/${id}/`;
         const socket = new WebSocket(wsUrl);
 
@@ -47,26 +47,24 @@ export default function ReportView() {
             console.log("WS Message:", message);
 
             if (message.message) {
-                setRealtimeMessage(message.message);
+                toast(message.message, 'info');
             }
 
             if (message.status === 'COMPLETED') {
-                // Refresh full data or update state directly
-                // Ideally backend sends full data, but our consumer simple sends score.
-                // Let's refetch to be safe and get full object
                 AnalysisService.getAnalysisStatus(id).then(fullData => {
                     setData(fullData);
                     setLoading(false);
+                    toast("Análise finalizada!", "success");
                 });
             } else if (message.status === 'FAILED') {
                 setError(message.message || "Analysis failed.");
                 setLoading(false);
+                showError(message.message || "Falha na análise.");
             }
         };
 
         socket.onerror = (error) => {
             console.error("WebSocket Error:", error);
-            // Fallback to polling could be implemented here
         };
 
         socket.onclose = () => {
@@ -76,13 +74,7 @@ export default function ReportView() {
         return () => {
             socket.close();
         };
-    }, [id]);
-
-    import { Skeleton } from '../components/ui/Skeleton';
-
-    // ... other imports
-
-    // Inside ReportView component:
+    }, [id, toast, showError]);
 
     if (loading) {
         return (

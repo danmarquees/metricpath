@@ -1,4 +1,4 @@
-import { PublicLayout } from '../../components/layout/PublicLayout';
+
 import { Construction } from 'lucide-react';
 
 interface PlaceholderPageProps {
@@ -8,7 +8,7 @@ interface PlaceholderPageProps {
 
 export default function PlaceholderPage({ title, description }: PlaceholderPageProps) {
     return (
-        <PublicLayout>
+        <>
             <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6">
                 <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 border border-zinc-800 shadow-[0_0_30px_-10px_rgba(79,70,229,0.3)]">
                     <Construction className="text-indigo-500" size={32} />
@@ -21,6 +21,6 @@ export default function PlaceholderPage({ title, description }: PlaceholderPageP
                     Em Construção 🚧
                 </div>
             </div>
-        </PublicLayout>
+        </>
     );
 }

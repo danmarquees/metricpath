@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthLayout } from '../components/layout/AuthLayout';
+
 import { Github, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
@@ -35,7 +35,12 @@ export default function Login() {
     };
 
     return (
-        <AuthLayout title="Bem-vindo de volta" subtitle="Acesse sua conta para continuar validando ideias.">
+        <>
+            <div className="text-center mb-8">
+                <h1 className="text-2xl font-bold text-white mb-2">Bem-vindo de volta</h1>
+                <p className="text-zinc-500 text-sm">Acesse sua conta para continuar validando ideias.</p>
+            </div>
+
             <form onSubmit={handleLogin} className="space-y-4">
                 {error && <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">{error}</div>}
                 <div>
@@ -81,6 +86,6 @@ export default function Login() {
             <p className="text-center text-xs text-zinc-500">
                 Não tens conta? <Link to="/signup" className="text-indigo-400 hover:text-indigo-300 font-bold">Criar conta</Link>
             </p>
-        </AuthLayout>
+        </>
     )
 }

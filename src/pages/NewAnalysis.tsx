@@ -1,4 +1,4 @@
-import { ArrowRight, Clock, Search, Sparkles, TrendingUp, Loader2, Globe, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Clock, Search, Sparkles, TrendingUp, Globe, CheckCircle2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnalysisService } from '../services/analysis';
@@ -199,8 +199,8 @@ export default function NewAnalysis() {
 
                         {/* Animated Steps Checklist */}
                         <div className="w-64 space-y-3 pt-4">
-                            <div className={`flex items-center gap-3 text-sm ${status !== 'idle' ? 'text-indigo-300' : 'text-zinc-600'}`}>
-                                <div className={`w-2 h-2 rounded-full ${status !== 'idle' ? 'bg-indigo-500 animate-pulse' : 'bg-zinc-800'}`} />
+                            <div className={`flex items-center gap-3 text-sm text-indigo-300`}>
+                                <div className={`w-2 h-2 rounded-full bg-indigo-500 animate-pulse`} />
                                 Coletando dados SERP
                             </div>
                             <div className={`flex items-center gap-3 text-sm ${status === 'analyzing' || status === 'redirecting' ? 'text-indigo-300' : 'text-zinc-600'}`}>

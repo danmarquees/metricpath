@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthLayout } from '../components/layout/AuthLayout';
+
 import { ArrowRight, Github, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -43,10 +43,12 @@ export default function Signup() {
     };
 
     return (
-        <AuthLayout
-            title={step === 1 ? "Criar Conta" : "Personalize sua Experiência"}
-            subtitle={step === 1 ? "Comece a validar suas ideias hoje mesmo." : "Nos ajude a entregar os melhores insights para você."}
-        >
+        <>
+            <div className="text-center mb-8">
+                <h1 className="text-2xl font-bold text-white mb-2">{step === 1 ? "Criar Conta" : "Personalize sua Experiência"}</h1>
+                <p className="text-zinc-500 text-sm">{step === 1 ? "Comece a validar suas ideias hoje mesmo." : "Nos ajude a entregar os melhores insights para você."}</p>
+            </div>
+
             {step === 1 ? (
                 <>
                     <form onSubmit={handleSignup} className="space-y-4 animate-in fade-in slide-in-from-right-8 duration-500">
@@ -167,6 +169,6 @@ export default function Signup() {
                     </button>
                 </form>
             )}
-        </AuthLayout>
+        </>
     )
 }

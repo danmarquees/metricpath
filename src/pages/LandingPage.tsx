@@ -1,11 +1,11 @@
 import { BarChart3, Check, ChevronRight, Globe, Layout, Search, Shield, TrendingUp, Zap, MessageSquare, Code2, Star, Target, X, Terminal, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PublicLayout } from '../components/layout/PublicLayout';
+
 import { HeroNetwork } from '../components/landing/HeroNetwork';
 
 export default function LandingPage() {
     return (
-        <PublicLayout>
+        <>
             {/* Hero Section */}
             <section className="relative pt-16 pb-20 px-6 overflow-hidden">
                 <HeroNetwork />
@@ -409,6 +409,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-        </PublicLayout>
+        </>
     )
 }

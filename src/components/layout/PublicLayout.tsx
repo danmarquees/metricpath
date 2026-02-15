@@ -1,12 +1,8 @@
-import { ReactNode } from 'react';
+
 import { BarChart3, ChevronRight, Code2, Globe, MessageSquare, Shield, Lock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
-interface PublicLayoutProps {
-    children: ReactNode;
-}
-
-export function PublicLayout({ children }: PublicLayoutProps) {
+export function PublicLayout() {
     return (
         <div className="min-h-screen bg-zinc-950 text-white selection:bg-indigo-500/30 font-sans">
             {/* Navbar */}
@@ -30,7 +26,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             </nav>
 
             <main className="pt-16">
-                {children}
+                <Outlet />
             </main>
 
             {/* Footer */}
