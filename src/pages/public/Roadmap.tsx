@@ -1,5 +1,4 @@
 import { Milestone, CheckCircle2, CircleDashed, Rocket, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 // Tipagem e Dados do Roadmap
 type Status = 'done' | 'in-progress' | 'planned';

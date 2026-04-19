@@ -12,8 +12,18 @@ export interface AnalysisResultData {
     ivm_score?: number;
     niche: string;
     raw_data?: any;
+    competitors?: any[];
     created_at: string;
     updated_at: string;
+}
+
+export interface SearchQueryData {
+    id: number;
+    niche: string;
+    location: string;
+    language: string;
+    created_at: string;
+    result?: AnalysisResultData;
 }
 
 export const AnalysisService = {
@@ -28,8 +38,16 @@ export const AnalysisService = {
     /**
      * Get the status of an analysis
      */
-    getAnalysisStatus: async (id: string): Promise<AnalysisResultData> => {
+    getAnalysisStatus: async (id: string | number): Promise<AnalysisResultData> => {
         const response = await api.get<AnalysisResultData>(`/analysis/${id}/status/`);
+        return response.data;
+    },
+    
+    /**
+     * Get recent analysis history
+     */
+    getHistory: async (): Promise<SearchQueryData[]> => {
+        const response = await api.get<SearchQueryData[]>('/analysis/');
         return response.data;
     }
 };

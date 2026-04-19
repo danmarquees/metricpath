@@ -204,7 +204,7 @@ export default function ReportView() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl">
                     <h3 className="text-zinc-500 text-xs font-bold uppercase tracking-wider mb-2">IVM Score</h3>
-                    <div className="text-4xl font-bold text-white mb-1">{ivm}</div>
+                    <div className="text-4xl font-bold text-white mb-1">{ivm.toFixed(0)}</div>
                     <div className="text-xs text-zinc-400">Índice de Viabilidade de Mercado</div>
                 </div>
                 <MetricCard title="Buscas Volume" value={(serp.search_volume || 0).toLocaleString()} change="--" isPositive={true} icon={Globe} />
@@ -216,14 +216,14 @@ export default function ReportView() {
                 <div className="lg:col-span-2 space-y-8">
                     <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl">
                         <h2 className="text-xl font-bold text-white mb-8">Tendência de Demanda</h2>
-                        <TrendChart />
+                        <TrendChart volume={serp.search_volume || 12500} />
                     </div>
-                    <SubNicheBreakdown />
+                    <SubNicheBreakdown competitors={(data as any)?.competitors || []} />
                 </div>
                 <div className="space-y-8">
-                    <MarketHeatmap />
-                    <AIInsights />
-                    <SentimentFeed />
+                    <MarketHeatmap competitors={(data as any)?.competitors || []} />
+                    <AIInsights niche={data?.niche} sentiment={data?.raw_data?.sentiment_summary || 0} />
+                    <SentimentFeed competitors={(data as any)?.competitors || []} />
                 </div>
             </div>
         </div>

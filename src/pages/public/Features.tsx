@@ -1,4 +1,4 @@
-import { BarChart3, ChevronRight, Globe, TrendingUp, Search, Shield, Layout, Target, Zap, LineChart, PieChart, Users, ArrowRight } from 'lucide-react';
+import { ChevronRight, Globe, TrendingUp, Search, Shield, Layout, Target, Zap, LineChart, Users, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Features() {
